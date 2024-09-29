@@ -57,6 +57,7 @@ def find_photo(message: telebot.types.Message):
     if not 1 <= photo_amount <= 10:
         bot.reply_to(message, "Photo amount should be in the 1-10 range")
         logger.info(f"{chat_name} chat: received /find with incorrect photo amount")
+        return
 
     try:
         file_ids = BackendAPI.find_photo(description, photo_amount, chat_id)
