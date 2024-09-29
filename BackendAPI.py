@@ -47,3 +47,17 @@ def process_photo(photo: bytes, file_id: str, chat_id: int) -> None:
 
     except (requests.exceptions.RequestException, BackendError):
         raise BackendError("Request to find photos failed")
+
+
+def create_chat(chat_id: int) -> None:
+    try:
+        params = {
+            "chat_id": chat_id
+        }
+        response = requests.post(f"{backend_api_url}/create_chat",
+                                 params=params)
+        if response.status_code != 200:
+            raise BackendError(f"Failed to initialize chat with chat_id {chat_id}")
+
+    except (requests.exceptions.RequestException, BackendError):
+        raise BackendError("Request to find photos failed")
