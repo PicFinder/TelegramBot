@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 logger = logging.getLogger("PicFinderBot")
 
 dotenv.load_dotenv()
-bot = telebot.TeleBot(token=os.getenv("token"))
+bot = telebot.TeleBot(token=os.getenv("BOT_TOKEN"))
 
 
 @bot.message_handler(content_types=['new_chat_members'])
