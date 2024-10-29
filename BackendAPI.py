@@ -3,7 +3,7 @@ import os
 import dotenv
 
 dotenv.load_dotenv()
-backend_api_url = os.getenv("backend_api_url")
+backend_api_url = os.getenv("BACKEND_API_URL")
 
 
 class BackendError(Exception):
