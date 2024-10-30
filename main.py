@@ -17,6 +17,8 @@ bot = telebot.TeleBot(token=os.getenv("BOT_TOKEN"))
 def new_member_handler(message):
     chat_id = message.chat.id
     chat_name = message.chat.title
+    logger.info(f"{chat_name} chat: bot added to chat")
+
     for new_member in message.new_chat_members:
         if new_member.id == bot.get_me().id:
             try:
@@ -30,14 +32,39 @@ def new_member_handler(message):
                              "process the photos in your chat history ¯\\_(ツ)_/¯ (yet...)\n\n"
                              "Use /find <description> to get a photo matching your description\n"
                              "To search for multiple photos use /find_<amount> <description>\n\n"
-                             "Made by @zazamrykh and @azazuent")
-            logger.info(f"{chat_name} chat: Initialized new chat")
+                             "Made by @zazamrykh @fedotovStanislav @azazuent")
+            logger.info(f"{chat_name} chat: chat initialized")
+
+
+@bot.message_handler(commands=["/start"])
+def start_handler(message):
+    chat_id = message.chat.id
+    chat_name = message.chat.title
+    logger.info(f"{chat_name} chat with user: bot added to chat")
+
+    for new_member in message.new_chat_members:
+        if new_member.id == bot.get_me().id:
+            try:
+                BackendAPI.create_chat(chat_id)
+            except BackendAPI.BackendError as e:
+                logger.error(str(e))
+                return
+            bot.send_message(chat_id,
+                             "Hi! I can help you find photos in your chat\n\n"
+                             "From now on, I will process the photos you send, sadly, I can't "
+                             "process the photos in your chat history ¯\\_(ツ)_/¯ (yet...)\n\n"
+                             "Use /find <description> to get a photo matching your description\n"
+                             "To search for multiple photos use /find_<amount> <description>\n\n"
+                             "Made by @zazamrykh @fedotovStanislav @azazuent")
+            logger.info(f"{chat_name} chat with user: chat initialized")
 
 
 @bot.message_handler(regexp=r"^\/find(_\d+)? ?[\s\S]*$")
 def find_photo(message: telebot.types.Message):
     chat_id = message.chat.id
     chat_name = message.chat.title
+    logger.info(f"{chat_name} chat: find request received")
+
     message_parts = message.text.split(" ", maxsplit=1)
 
     if len(message_parts) < 2:
@@ -67,20 +94,21 @@ def find_photo(message: telebot.types.Message):
 
     if not file_ids:
         bot.reply_to(message, "No photos have been processed yet")
-        logger.info(f"{chat_name} chat: No photos processed yet")
+        logger.info(f"{chat_name} chat: no matching photos")
         return
 
     media_group = [telebot.types.InputMediaPhoto(file_id) for file_id in file_ids]
     bot.send_media_group(chat_id, media_group, reply_to_message_id=message.id)
 
-    logger.info(f"{chat_name} chat: Processed request to find {photo_amount} photos "
-                f"correlated to {description}")
+    logger.info(f"{chat_name} chat: processed a request to find {photo_amount} photos "
+                f"related to \"{description}\"")
 
 
 @bot.message_handler(content_types=["photo"])
 def process_photo(message: telebot.types.Message):
     chat_id = message.chat.id
     chat_name = message.chat.title
+    logger.info(f"{chat_name} chat: caught a photo")
 
     file_id = message.photo[-1].file_id
     file_info = bot.get_file(file_id)
@@ -91,7 +119,7 @@ def process_photo(message: telebot.types.Message):
         logger.error(f"{chat_name}: {str(e)}")
         return
 
-    logger.info(f"{chat_name} chat: Processed photo")
+    logger.info(f"{chat_name} chat: processed photo")
 
 
 if __name__ == "__main__":
