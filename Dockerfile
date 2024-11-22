@@ -1,5 +1,8 @@
 FROM python:3.11
 
+ENV BOT_TOKEN=${BOT_TOKEN}
+ENV BACKEND_API_URL=${BACKEND_API_URL}
+
 WORKDIR /app
 
 COPY requirements.txt .
