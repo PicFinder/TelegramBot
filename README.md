@@ -1,2 +1,2 @@
 # PicFinder Telegram Bot
-@PicFindHelperBot implementation using pytelegrambotapi
+@PicFindHelperBot implementation using pytelegrambotapi!
